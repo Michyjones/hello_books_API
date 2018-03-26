@@ -20,15 +20,8 @@ class Student(User):
 
 
 class Book(object):
-    def __init__(self, book_id="", book_name="", category=""):
-        self.book_id = book_id
-        self.book_name = book_name
-        self.category = category
-
-
-class Get_a_book(Book):
-    def __init__(self, book_id="", book_name="", category=""):
-        self.book_id = book_id
+    def __init__(self, bookid="", book_name="", category=""):
+        self.bookid = bookid
         self.book_name = book_name
         self.category = category
 
@@ -36,12 +29,12 @@ class Get_a_book(Book):
 class Borrow(Book, User):
     """Mutltiple inheritance"""
 
-    def __init__(self, book_id, user_id):
+    def __init__(self, bookid, email):
         super(Borrow, self).__init__()
 
 
 class Return(Book, User):
     """docstring for Return"""
 
-    def __init__(self, arg):
+    def __init__(self, email):
         super(Return, self).__init__()
