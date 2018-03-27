@@ -214,3 +214,18 @@ class Logout(MethodView):
             return jsonify("You are not logged in")
 
 
+class ResetPassword(User, MethodView):
+    def post(self):
+        """ This Method resets password """
+        data = request.form.to_dict()
+        email = data.get('email')
+        if email in users_data.keys():
+            password = data.get('new_password')
+
+            new_user_account = User(email=email, password=password)
+
+            users_data[email] = new_user_account
+            return jsonify("password reset successfully")
+
+        else:
+            return jsonify("User account does not exist")
