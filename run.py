@@ -1,5 +1,5 @@
 from app import UserRegister, flask_app, UserLogin, Book, GetBook, DeleteBook
-from app import EditBook, Logout
+from app import ResetPassword, EditBook, Logout
 flask_app.add_url_rule(
     '/api/v1/auth/register', view_func=UserRegister.as_view(
         'register'), methods=['GET', 'POST'])
@@ -21,6 +21,10 @@ flask_app.add_url_rule(
 flask_app.add_url_rule(
     '/api/v1/auth/logout', view_func=Logout.as_view(
         'logout'), methods=['POST'])
+
+flask_app.add_url_rule(
+    '/api/v1/auth/reset-password', view_func=ResetPassword.as_view(
+        'reset-password '), methods=['POST'])
 
 
 if __name__ == '__main__':
