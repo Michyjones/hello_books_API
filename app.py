@@ -29,10 +29,7 @@ class UserRegister(User, MethodView):
                 {'error': 'Fill in the details'}), 400)
 
         if password is None:
-            return make_response(jsonify(
-                {
-                    'error': 'Fill in the details'
-                }), 400)
+            return make_response(jsonify({'error': 'Enter password'}), 400)
 
         if (role != 'user') and (role != 'admin'):
             return make_response(jsonify(
@@ -205,3 +202,15 @@ class DeleteBook(MethodView):
                     "error": "Book does not exist."}), 404)
         else:
             return jsonify({"message": "please login"})
+
+
+class Logout(MethodView):
+    def post(self):
+        """This method logs out user"""
+        if "user" in session.keys():
+            session.pop("user")
+            return jsonify("You are logged Out!")
+        else:
+            return jsonify("You are not logged in")
+
+
