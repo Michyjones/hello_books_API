@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, request, make_response, jsonify, session
-from models import User, Book
+from models import User, Book, Borrow
 
 from flask.views import MethodView
 
@@ -8,6 +8,7 @@ flask_app = Flask(__name__)
 
 users_data = {}
 books = {}
+borrowed = {}
 
 flask_app.secret_key = os.urandom(24)
 # print(flask_app.secret_key)
@@ -229,3 +230,27 @@ class ResetPassword(User, MethodView):
 
         else:
             return jsonify("User account does not exist")
+
+
+class BorrowBook(Borrow, MethodView):
+    def post(self, bookid):
+        if 'user_logged_in' in session.keys():
+            if bookid in books.keys():
+
+                for bookid, value in books.items():
+                    if value.available is True:
+
+                        borrow = Borrow(bookid=bookid,
+                                        email=session['user_logged_in'])
+                        borrowed[bookid] = borrow.email
+                        value.available = False
+
+                        return jsonify('You have borrowed a book with id {}'
+                                       .format(bookid))
+                    else:
+                        return jsonify("the book is not available")
+
+            else:
+                return jsonify("No book with that id")
+        else:
+            return jsonify("please login")
