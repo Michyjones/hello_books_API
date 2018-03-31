@@ -1,5 +1,8 @@
+import os
 from app import UserRegister, flask_app, UserLogin, Book, GetBook, DeleteBook
 from app import ResetPassword, EditBook, Logout, BorrowBook
+
+
 flask_app.add_url_rule(
     '/api/v1/auth/register', view_func=UserRegister.as_view(
         'register'), methods=['GET', 'POST'])
@@ -30,6 +33,6 @@ flask_app.add_url_rule(
         'borrowbook '), methods=['POST'])
 
 
-if __name__ == '__main__':
-    flask_app.run(debug=True)
- 
+# if __name__ == '__main__':
+port = int(os.environ.get('PORT', 5000))
+flask_app.run(host='0.0.0.0', port=port, debug=True)
