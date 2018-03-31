@@ -5,10 +5,10 @@ from app import ResetPassword, EditBook, Logout, BorrowBook
 
 flask_app.add_url_rule(
     '/api/v1/auth/register', view_func=UserRegister.as_view(
-        'register'), methods=['GET', 'POST'])
+        'register'), methods=['POST'])
 flask_app.add_url_rule(
     '/api/v1/auth/login', view_func=UserLogin.as_view(
-        'login'), methods=['GET', 'POST'])
+        'login'), methods=['POST'])
 flask_app.add_url_rule(
     '/api/v1/books', view_func=Book.as_view(
         'books'), methods=['GET', 'POST'])
