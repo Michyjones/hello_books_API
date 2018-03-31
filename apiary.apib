@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: http://hellobooks.apiblueprint.org/
+HOST: https://hellobookslibrary.herokuapp.com/api/v1
 
 # hellobooks
 
@@ -7,3 +7,34 @@ Hello_Books API is an application that helps manage a library and its processes
 like stocking,  tracking and renting books. With this application users are able
 to find and rent books. The  application also has an admin section where the admin 
 can do things like add books, delete  books and modify book information.
+
+### Register User [/auth/register]
+Endpoint for creating a new user given the email, password and role.
+
+#### register  [POST]
+
++ Request (application/x-www-form-urlencoded)
+
+        email=jones@gmail.com&password=qwerty1234&role=admin
+    
++ Response 201 (appliaction/json)
+
+        {
+            "message": "user_created successfully"
+        }
+
+
+### Login User [/auth/login]
+User logs in by providing the email and password.
+
+#### login [POST]
+
++ Request (application/x-www-form-urlencoded)
+
+        email=jones@gmail.com&password=qwerty1234
+        
++ Response 200 
+
+        {
+            "message": "user_login successfully"
+        }
