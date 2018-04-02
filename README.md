@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/Michyjones/hello_books_API.svg?branch=API_endpoints)](https://travis-ci.org/Michyjones/hello_books_API)
+[![Coverage Status](https://coveralls.io/repos/github/Michyjones/hello_books_API/badge.svg?branch=master)](https://coveralls.io/github/Michyjones/hello_books_API?branch=master)
 
 # hello_books_API
 Hello_Books API is an application that helps manage a library and its processes like stocking, 
