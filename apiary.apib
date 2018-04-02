@@ -38,3 +38,48 @@ User logs in by providing the email and password.
         {
             "message": "user_login successfully"
         }
+        
+### all books [/books]
+#### get books [GET]
+Send a request to get/view all the books available in the catalogue.
+
++ Response 200 
+
+        [
+         {
+            "bookid": "001",
+            "book_name": "Introduction to html",
+            "book_category": "engineerint"
+        } {
+            "bookid": "003",
+            "book_name": "Introduction to java",
+            "book_category": "engineerint"
+        }
+        ]
+
+
+#### create book [POST]
+An admin adds book to the catalogue
+
++ Request (application/x-www-form-urlencoded)
+
+        bookid=001&bookname=introduction to html&book_category=engineering
+        
+        
++ Response 201 
+
+        {
+            "message": "book created successfully"
+        }
+
+### one book [/book/1]
+#### get one book [GET]
+A user can view a single bookusing the book id
+
++ Response 200 (application/json)
+
+        {
+            "bookid": "001",
+            "book_name": "Introduction to html",
+            "book_category": "engineerint"
+        }
