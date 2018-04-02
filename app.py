@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, request, make_response, jsonify, session
-from models import User, Book
+from models import User, Book, Borrow
 
 from flask.views import MethodView
 
@@ -8,6 +8,7 @@ flask_app = Flask(__name__)
 
 users_data = {}
 books = {}
+borrowed = {}
 
 flask_app.secret_key = os.urandom(24)
 # print(flask_app.secret_key)
@@ -29,10 +30,7 @@ class UserRegister(User, MethodView):
                 {'error': 'Fill in the details'}), 400)
 
         if password is None:
-            return make_response(jsonify(
-                {
-                    'error': 'Fill in the details'
-                }), 400)
+            return make_response(jsonify({'error': 'Enter password'}), 400)
 
         if (role != 'user') and (role != 'admin'):
             return make_response(jsonify(
@@ -205,3 +203,54 @@ class DeleteBook(MethodView):
                     "error": "Book does not exist."}), 404)
         else:
             return jsonify({"message": "please login"})
+
+
+class Logout(MethodView):
+    def post(self):
+        """This method logs out user"""
+        if "user" in session.keys():
+            session.pop("user")
+            return jsonify("You are logged Out!")
+        else:
+            return jsonify("You are not logged in")
+
+
+class ResetPassword(User, MethodView):
+    def post(self):
+        """ This Method resets password """
+        data = request.form.to_dict()
+        email = data.get('email')
+        if email in users_data.keys():
+            password = data.get('new_password')
+
+            new_user_account = User(email=email, password=password)
+
+            users_data[email] = new_user_account
+            return jsonify("password reset successfully")
+
+        else:
+            return jsonify("User account does not exist")
+
+
+class BorrowBook(Borrow, MethodView):
+    def post(self, bookid):
+        if 'user_logged_in' in session.keys():
+            if bookid in books.keys():
+
+                for bookid, value in books.items():
+                    if value.available is True:
+
+                        borrow = Borrow(bookid=bookid,
+                                        email=session['user_logged_in'])
+                        borrowed[bookid] = borrow.email
+                        value.available = False
+
+                        return jsonify('You have borrowed a book with id {}'
+                                       .format(bookid))
+                    else:
+                        return jsonify("the book is not available")
+
+            else:
+                return jsonify("No book with that id")
+        else:
+            return jsonify("please login")

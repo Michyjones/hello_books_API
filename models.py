@@ -5,6 +5,7 @@ class User(object):
         self.email = email
         self.password = password
         self.role = role
+        super(User, self).__init__()
 
 
 class Admin(User):
@@ -20,21 +21,23 @@ class Student(User):
 
 
 class Book(object):
-    def __init__(self, bookid="", book_name="", category=""):
+    def __init__(self, bookid="", book_name="", category="", available=True):
         self.bookid = bookid
         self.book_name = book_name
         self.category = category
+        self.available = available
+        super(Book, self).__init__()
 
 
 class Borrow(Book, User):
     """Mutltiple inheritance"""
 
-    def __init__(self, bookid, email):
-        super(Borrow, self).__init__()
+    def __init__(self, bookid="", email="", available=True):
+        super(Borrow, self).__init__(bookid, email, available)
 
 
 class Return(Book, User):
-    """docstring for Return"""
+    """This class is for Return"""
 
     def __init__(self, email):
         super(Return, self).__init__()
