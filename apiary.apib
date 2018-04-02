@@ -83,3 +83,34 @@ A user can view a single bookusing the book id
             "book_name": "Introduction to html",
             "book_category": "engineerint"
         }
+
+#### delete a book [DELETE]
+An admin can delete a a user by the id
+
++ Response 204
+
+#### edit a book [PUT]
+
++ Request (application/x-www-form-urlencoded)
+        
+        bookname=introduction to cisco&book_category=engineering
+        
++ Response 201 (application/json)
+
+        {
+            "message": "edit was successfful"
+        }
+        
+        
+### Borrow [/users/books/<bookid]
+Users can borrow books from the library
+#### Borrow [POST]
+
++ Request (application/x-www-form-urlencoded)
+
++ Response 200
+
+        {
+            "message": "You have borrowed a book with id {}"
+                                       .format(bookid)
+        }
