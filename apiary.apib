@@ -114,3 +114,28 @@ Users can borrow books from the library
             "message": "You have borrowed a book with id {}"
                                        .format(bookid)
         }
+
+### Logout [/logout]
+A user is able to logout and clears the session
+
+#### logout [POST]
+
++ Response 200 (application/json)
+
+        {
+            "message": "you logged out"
+        }
+### reset password [/reset-password]
+
+#### reset password [POST]
+A user can reset their password
+
++ Request (application/x-www-form-urlencoded)
+
+        email=jones@gmail.com&new_password=asdfgh12345
+    
++ Response 200 (application/json)
+
+        {
+            "message": "password reset successful"
+        }
