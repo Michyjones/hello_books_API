@@ -15,8 +15,6 @@ flask_app.secret_key = os.urandom(24)
 
 
 class UserRegister(User, MethodView):
-    def get(self):
-        return render_template('register.html')
 
     def post(self):
         # getting a dictonary from flask request form
@@ -53,9 +51,6 @@ class UserRegister(User, MethodView):
 
 
 class UserLogin(MethodView):
-    def get(self):
-        return render_template('login.html')
-
     def post(self):
         data = request.form.to_dict()
         email = data.get('email')
