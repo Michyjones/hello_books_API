@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, make_response, jsonify, session
+from flask import Flask, request, make_response, jsonify
 from models import User, Book, Borrow
 
 from flask.views import MethodView
@@ -44,7 +44,6 @@ class UserRegister(User, MethodView):
 
         new_user = User(email=email, password=password, role=role)
         users_data[email] = new_user
-        session['user'] = email
         return make_response(jsonify({
             "message": "user_created successfully"
         }), 201)
@@ -67,7 +66,6 @@ class UserLogin(MethodView):
         if email in users_data.keys():
             user_data = users_data[email]
             if password == user_data.password:
-                session['user'] = user_data.email
                 if user_data.role == 'user':
                     return make_response(jsonify({
                         "message": "student login successfully"
@@ -84,31 +82,70 @@ class UserLogin(MethodView):
 class Book(Book, MethodView):
     def get(self):
         """This method retrieves allbooks """
-        if "user" in session.keys():
-            all_books = []
-            for key, value in books.items():
-                all_books.append({
-                    "bookid": key,
-                    "book_name": value.book_name,
-                    "category": value.category
-                })
-            return make_response(jsonify(all_books), 200)
-        else:
-            return make_response(jsonify({
-                "message": "please login"
-            }))
+        all_books = []
+        for key, value in books.items():
+            all_books.append({
+                "bookid": key,
+                "book_name": value.book_name,
+                "category": value.category
+            })
+        return make_response(jsonify(all_books), 200)
 
     def post(self):
         """This method add a book"""
-        if "user" in session.keys():
+        data = request.form.to_dict()
+        bookid = data.get('bookid')
+        book_name = data.get('book_name')
+        category = data.get('category')
+
+        if bookid is None:
+            return make_response(jsonify(
+                {"error": "Enter Book id"}), 400)
+
+        if book_name is None:
+            return make_response(jsonify(
+                {"error": "Enter Book name"}), 400)
+        if category is None:
+            return make_response(jsonify(
+                {"error": "Enter Category"}), 400)
+
+        if bookid in books.keys():
+            return make_response(jsonify(
+                {'message': 'Book  already exist'}), 409)
+
+        new_book = Book(bookid=bookid, book_name=book_name,
+                        category=category)
+        books[bookid] = new_book
+        return make_response(jsonify(
+            {"message": "Book Added successfully"}), 201)
+
+
+class GetBook(Book, MethodView):
+    """ This method gets a single book"""
+
+    def get(self, bookid):
+        if bookid in books.keys():
+            one_book = []
+            book = books[bookid]
+            one_book.append({
+                "bookid": book.bookid,
+                "book_name": book.book_name,
+                "category": book.category})
+            return make_response(jsonify(one_book), 200)
+
+        else:
+            return make_response(jsonify({
+                "error": "No book with that id"
+            }))
+
+
+class EditBook(Book, MethodView):
+    def put(self, bookid):
+        """ This Method edits book"""
+        if bookid in books.keys():
             data = request.form.to_dict()
-            bookid = data.get('bookid')
             book_name = data.get('book_name')
             category = data.get('category')
-
-            if bookid is None:
-                return make_response(jsonify(
-                    {"error": "Enter Book id"}), 400)
 
             if book_name is None:
                 return make_response(jsonify(
@@ -117,87 +154,25 @@ class Book(Book, MethodView):
                 return make_response(jsonify(
                     {"error": "Enter Category"}), 400)
 
-            if bookid in books.keys():
-                return make_response(jsonify(
-                    {'message': 'Book  already exist'}), 409)
-
-            new_book = Book(bookid=bookid, book_name=book_name,
-                            category=category)
-            books[bookid] = new_book
+            delete_book = Book(bookid=bookid, book_name=book_name,
+                               category=category)
+            books[bookid] = delete_book
             return make_response(jsonify(
-                {"message": "Book Added successfully"
-                 }), 201)
+                {"message": "Edit successfully"}), 201)
         else:
-            return jsonify({
-                "error": "please login"})
-
-
-class GetBook(Book, MethodView):
-    """ This method gets a single book"""
-
-    def get(self, bookid):
-        if "user" in session.keys():
-            if bookid in books.keys():
-                one_book = []
-                book = books[bookid]
-                one_book.append({
-                    "bookid": book.bookid,
-                    "book_name": book.book_name,
-                    "category": book.category})
-                return make_response(jsonify(one_book), 200)
-
-            else:
-                return make_response(jsonify({
-                    "error": "No book with that id"
-
-                }))
-        else:
-            return jsonify({
-                "error": "please login"})
-
-
-class EditBook(Book, MethodView):
-    def put(self, bookid):
-        """ This Method edits book"""
-        if "user" in session.keys():
-            if bookid in books.keys():
-                data = request.form.to_dict()
-                book_name = data.get('book_name')
-                category = data.get('category')
-
-                if book_name is None:
-                    return make_response(jsonify(
-                        {"error": "Enter Book name"}), 400)
-                if category is None:
-                    return make_response(jsonify(
-                        {"error": "Enter Category"}), 400)
-
-                delete_book = Book(bookid=bookid, book_name=book_name,
-                                   category=category)
-                books[bookid] = delete_book
-                print(books)
-                return make_response(jsonify(
-                    {"message": "Edit successfully"
-                     }), 201)
-            else:
                 return jsonify("No book with that id")
-        else:
-            return jsonify("please login")
 
 
 class DeleteBook(MethodView):
     def delete(self, bookid):
         """This method delete book"""
-        if "user" in session.keys():
-            if bookid in books.keys():
-                del books[bookid]
-                return make_response(jsonify({
-                    "message": "delete successful"}), 204)
-            else:
-                return make_response(jsonify({
-                    "error": "Book does not exist."}), 404)
+        if bookid in books.keys():
+            del books[bookid]
+            return make_response(jsonify(
+                {"message": "delete successful"}), 204)
         else:
-            return jsonify({"message": "please login"})
+            return make_response(jsonify(
+                {"error": "Book does not exist."}), 404)
 
 
 class Logout(MethodView):
@@ -229,14 +204,12 @@ class ResetPassword(User, MethodView):
 
 class BorrowBook(Borrow, MethodView):
     def post(self, bookid):
-        if 'user_logged_in' in session.keys():
             if bookid in books.keys():
 
                 for bookid, value in books.items():
                     if value.available is True:
 
-                        borrow = Borrow(bookid=bookid,
-                                        email=session['user_logged_in'])
+                        borrow = Borrow(bookid=bookid)
                         borrowed[bookid] = borrow.email
                         value.available = False
 
@@ -247,5 +220,4 @@ class BorrowBook(Borrow, MethodView):
 
             else:
                 return jsonify("No book with that id")
-        else:
-            return jsonify("please login")
+
