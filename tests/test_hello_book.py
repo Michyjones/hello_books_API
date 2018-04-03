@@ -1,12 +1,15 @@
 
 import unittest
-import run
+from run import flask_app
 
 
 class UserAuthentication(unittest.TestCase):
 
     def setUp(self):
-        self.client = run.flask_app.test_client()
+        self.client = flask_app.test_client()
+        with self.client as c:
+            with c.session_transaction() as session:
+                session['user'] = "michyjones@ggmail.com"
 
     def test_register_user_email_isnot_null(self):
         user = {"email": None, "password": "password",
