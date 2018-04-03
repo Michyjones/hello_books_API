@@ -31,38 +31,34 @@ class Book(Book, MethodView):
     def post(self):
         """This method add a book"""
         if "user" in session.keys():
-            for session["user"], value in users_data.items():
-                if value.role == "admin":
-                    data = request.form.to_dict()
-                    bookid = data.get('bookid')
-                    book_name = data.get('book_name')
-                    category = data.get('category')
+            
+            data = request.form.to_dict()
+            bookid = data.get('bookid')
+            book_name = data.get('book_name')
+            category = data.get('category')
 
-                    if bookid is None:
-                        return make_response(jsonify(
-                            {"error": "Enter Book id"}), 400)
+            if bookid is None:
+                return make_response(jsonify(
+                    {"error": "Enter Book id"}), 400)
 
-                    if book_name is None:
-                        return make_response(jsonify(
-                            {"error": "Enter Book name"}), 400)
-                    if category is None:
-                        return make_response(jsonify(
-                            {"error": "Enter Category"}), 400)
+            if book_name is None:
+                return make_response(jsonify(
+                    {"error": "Enter Book name"}), 400)
+            if category is None:
+                return make_response(jsonify(
+                    {"error": "Enter Category"}), 400)
 
-                    if bookid in books.keys():
-                        return make_response(jsonify(
-                            {'message': 'Book  already exist'}), 409)
+            if bookid in books.keys():
+                return make_response(jsonify(
+                    {'message': 'Book  already exist'}), 409)
 
-                    new_book = Book(bookid=bookid, book_name=book_name,
-                                    category=category)
-                    books[bookid] = new_book
-                    return make_response(jsonify(
-                        {"message": "Book Added successfully"
-                         }), 201)
-                else:
-                    return jsonify({
-                        "error": "permission denied"
-                        })
+            new_book = Book(bookid=bookid, book_name=book_name,
+                            category=category)
+            books[bookid] = new_book
+            return make_response(jsonify(
+                {"message": "Book Added successfully"
+                 }), 201)
+            
         else:
             return jsonify({
                 "error": "please login"})
