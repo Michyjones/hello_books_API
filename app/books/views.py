@@ -1,84 +1,14 @@
-import os
-from flask import Flask, render_template, request, make_response, jsonify, session
-from models import User, Book, Borrow
+from flask import Blueprint, request, make_response, jsonify, session
+from app.books.models import Book
 
 from flask.views import MethodView
+from app.users.views import users_data 
 
-flask_app = Flask(__name__)
-
-users_data = {}
 books = {}
 borrowed = {}
 
-flask_app.secret_key = os.urandom(24)
-# print(flask_app.secret_key)
 
-
-class UserRegister(User, MethodView):
-
-    def post(self):
-        # getting a dictonary from flask request form
-        data = request.form.to_dict()
-        email = data.get('email')
-        password = data.get('password')
-        role = data.get('role')
-
-        if email is None:
-            return make_response(jsonify(
-                {'error': 'Fill in the details'}), 400)
-
-        if password is None:
-            return make_response(jsonify({'error': 'Enter password'}), 400)
-
-        if (role != 'user') and (role != 'admin'):
-            return make_response(jsonify(
-                {'error': 'Role can only be user or admin'}), 400)
-
-        if len(password) < 8:
-
-            return make_response(jsonify(
-                {'message': 'password should be more than 8 character'}), 400)
-        if email in users_data.keys():
-            return make_response(jsonify(
-                {'message': 'user already exist'}), 409)
-
-        new_user = User(email=email, password=password, role=role)
-        users_data[email] = new_user
-        session['user'] = email
-        return make_response(jsonify({
-            "message": "user_created successfully"
-        }), 201)
-
-
-class UserLogin(MethodView):
-    def post(self):
-        data = request.form.to_dict()
-        email = data.get('email')
-        password = data.get('password')
-
-        if email is None:
-            return make_response(jsonify(
-                {"error": "Email required"}), 400)
-
-        if password is None:
-            return make_response(jsonify(
-                {"error": "password required"}), 400)
-
-        if email in users_data.keys():
-            user_data = users_data[email]
-            if password == user_data.password:
-                session['user'] = user_data.email
-                if user_data.role == 'user':
-                    return make_response(jsonify({
-                        "message": "student login successfully"
-                    }), 200)
-                else:
-                    return make_response(jsonify({
-                        "message": "Admin logged in"
-                    }), 200)
-        return make_response(jsonify({
-            "error": "invalid credentials"
-        }), 401)
+book = Blueprint('book', __name__, url_prefix='/api/v1')
 
 
 class Book(Book, MethodView):
@@ -101,6 +31,7 @@ class Book(Book, MethodView):
     def post(self):
         """This method add a book"""
         if "user" in session.keys():
+            
             data = request.form.to_dict()
             bookid = data.get('bookid')
             book_name = data.get('book_name')
@@ -127,6 +58,7 @@ class Book(Book, MethodView):
             return make_response(jsonify(
                 {"message": "Book Added successfully"
                  }), 201)
+            
         else:
             return jsonify({
                 "error": "please login"})
@@ -200,45 +132,17 @@ class DeleteBook(MethodView):
             return jsonify({"message": "please login"})
 
 
-class Logout(MethodView):
-    def post(self):
-        """This method logs out user"""
-        if "user" in session.keys():
-            session.pop("user")
-            return jsonify("You are logged Out!")
-        else:
-            return jsonify("You are not logged in")
-
-
-class ResetPassword(User, MethodView):
-    def post(self):
-        """ This Method resets password """
-        data = request.form.to_dict()
-        email = data.get('email')
-        if email in users_data.keys():
-            password = data.get('new_password')
-
-            new_user_account = User(email=email, password=password)
-
-            users_data[email] = new_user_account
-            return jsonify("password reset successfully")
-
-        else:
-            return jsonify("User account does not exist")
-
-
-class BorrowBook(Borrow, MethodView):
+class BorrowBook(MethodView):
     def post(self, bookid):
-        if 'user_logged_in' in session.keys():
+        if 'user' in session.keys():
             if bookid in books.keys():
 
                 for bookid, value in books.items():
+                    print(bookid)
                     if value.available is True:
-
-                        borrow = Borrow(bookid=bookid,
-                                        email=session['user_logged_in'])
-                        borrowed[bookid] = borrow.email
+                        borrowed[bookid] = session['user']
                         value.available = False
+                        print(borrowed)
 
                         return jsonify('You have borrowed a book with id {}'
                                        .format(bookid))
@@ -249,3 +153,20 @@ class BorrowBook(Borrow, MethodView):
                 return jsonify("No book with that id")
         else:
             return jsonify("please login")
+
+
+book.add_url_rule(
+    '/books', view_func=Book.as_view(
+        'books'), methods=['GET', 'POST'])
+book.add_url_rule(
+    '/books/<bookid>', view_func=GetBook.as_view(
+        'getbook'), methods=['GET'])
+book.add_url_rule(
+    '/books/<bookid>', view_func=EditBook.as_view(
+        'editbook'), methods=['PUT'])
+book.add_url_rule(
+    '/books/<bookid>', view_func=DeleteBook.as_view(
+        'deletebook'), methods=['DELETE'])
+book.add_url_rule(
+    '/users/books/<bookid>', view_func=BorrowBook.as_view(
+        'borrowbook'), methods=['POST'])

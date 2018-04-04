@@ -1,13 +1,12 @@
 
 import unittest
-import run
-from app import flask_app
+from run import flask_app
 
 
 class UserAuthentication(unittest.TestCase):
 
     def setUp(self):
-        self.client = run.flask_app.test_client()
+        self.client = flask_app.test_client()
         with self.client as c:
             with c.session_transaction() as session:
                 session['user'] = "michyjones@ggmail.com"
