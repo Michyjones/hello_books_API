@@ -1,8 +1,6 @@
 from flask import Blueprint, request, make_response, jsonify, session
 from app.books.models import Book
-
 from flask.views import MethodView
-from app.users.views import users_data 
 
 books = {}
 borrowed = {}
@@ -31,20 +29,19 @@ class Book(Book, MethodView):
     def post(self):
         """This method add a book"""
         if "user" in session.keys():
-            
             data = request.form.to_dict()
             bookid = data.get('bookid')
             book_name = data.get('book_name')
             category = data.get('category')
 
-            if bookid is None:
+            if bookid == '':
                 return make_response(jsonify(
                     {"error": "Enter Book id"}), 400)
 
-            if book_name is None:
+            if book_name == '':
                 return make_response(jsonify(
                     {"error": "Enter Book name"}), 400)
-            if category is None:
+            if category == '':
                 return make_response(jsonify(
                     {"error": "Enter Category"}), 400)
 
@@ -58,16 +55,14 @@ class Book(Book, MethodView):
             return make_response(jsonify(
                 {"message": "Book Added successfully"
                  }), 201)
-            
         else:
             return jsonify({
                 "error": "please login"})
 
 
 class GetBook(Book, MethodView):
-    """ This method gets a single book"""
-
     def get(self, bookid):
+        """ This method gets a single book"""
         if "user" in session.keys():
             if bookid in books.keys():
                 one_book = []
@@ -97,16 +92,16 @@ class EditBook(Book, MethodView):
                 book_name = data.get('book_name')
                 category = data.get('category')
 
-                if book_name is None:
+                if book_name == '':
                     return make_response(jsonify(
                         {"error": "Enter Book name"}), 400)
-                if category is None:
+                if category == '':
                     return make_response(jsonify(
                         {"error": "Enter Category"}), 400)
 
-                delete_book = Book(bookid=bookid, book_name=book_name,
-                                   category=category)
-                books[bookid] = delete_book
+                edit_book = Book(bookid=bookid, book_name=book_name,
+                                 category=category)
+                books[bookid] = edit_book
                 print(books)
                 return make_response(jsonify(
                     {"message": "Edit successfully"

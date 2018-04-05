@@ -12,14 +12,14 @@ class UserAuthentication(unittest.TestCase):
                 session['user'] = "michyjones@ggmail.com"
 
     def test_register_user_email_isnot_null(self):
-        user = {"email": None, "password": "password",
+        user = {"email": '', "password": "password",
                 "role": "user"}
         response = self.client.post(
             "/api/v1/auth/register", data=user)
         self.assertEqual(response.status_code, 400)
 
     def test_register_user_password_isnot_null(self):
-        user = {"email": "michyjones@gmail.com", "password": None,
+        user = {"email": "michyjones@gmail.com", "password": '',
                 "role": "user"}
         response = self.client.post(
             "/api/v1/auth/register", data=user)

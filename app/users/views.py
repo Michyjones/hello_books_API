@@ -18,11 +18,11 @@ class UserRegister(User, MethodView):
         password = data.get('password')
         role = data.get('role')
 
-        if email is None:
+        if email == '':
             return make_response(jsonify(
-                {'error': 'Fill in the details'}), 400)
+                {'error': 'Enter the email'}), 400)
 
-        if password is None:
+        if password == '':
             return make_response(jsonify({'error': 'Enter password'}), 400)
 
         if (role != 'user') and (role != 'admin'):
