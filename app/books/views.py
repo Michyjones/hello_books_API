@@ -79,8 +79,8 @@ class GetBook(Book, MethodView):
 
                 }))
         else:
-            return jsonify({
-                "error": "please login"})
+            return make_response(jsonify({
+                "error": "please login"}))
 
 
 class EditBook(Book, MethodView):
@@ -107,9 +107,9 @@ class EditBook(Book, MethodView):
                     {"message": "Edit successfully"
                      }), 201)
             else:
-                return jsonify("No book with that id")
+                return make_response(jsonify("No book with that id"), 404)
         else:
-            return jsonify("please login")
+            return make_response(jsonify("please login"), 400)
 
 
 class DeleteBook(MethodView):
@@ -124,7 +124,7 @@ class DeleteBook(MethodView):
                 return make_response(jsonify({
                     "error": "Book does not exist."}), 404)
         else:
-            return jsonify({"message": "please login"})
+            return make_response(jsonify({"message": "please login"}))
 
 
 class BorrowBook(MethodView):
@@ -142,12 +142,13 @@ class BorrowBook(MethodView):
                         return jsonify('You have borrowed a book with id {}'
                                        .format(bookid))
                     else:
-                        return jsonify("the book is not available")
+                        return make_response(jsonify(
+                            "the book is not available"), 404)
 
             else:
-                return jsonify("No book with that id")
+                return make_response(jsonify("No book with that id"))
         else:
-            return jsonify("please login")
+            return make_response(jsonify("please login"))
 
 
 book.add_url_rule(
