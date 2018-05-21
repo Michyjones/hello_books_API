@@ -81,9 +81,9 @@ class Logout(MethodView):
         """This method logs out user"""
         if "user" in session.keys():
             session.pop("user")
-            return jsonify("You are logged Out!")
+            return make_response(jsonify("You are logged Out!"), 200)
         else:
-            return jsonify("You are not logged in")
+            return make_response(jsonify("You are not logged in"), 201)
 
 
 class ResetPassword(User, MethodView):
@@ -97,7 +97,7 @@ class ResetPassword(User, MethodView):
             new_user_account = User(email=email, password=password)
 
             users_data[email] = new_user_account
-            return jsonify("password reset successfully")
+            return make_response(jsonify("password reset successfully"), 201)
 
         else:
             return jsonify("User account does not exist")

@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/Michyjones/hello_books_API.svg?branch=API_endpoints)](https://travis-ci.org/Michyjones/hello_books_API)
+[![Maintainability](https://api.codeclimate.com/v1/badges/3c4321d03e94eb715724/maintainability)](https://codeclimate.com/github/Michyjones/hello_books_API/maintainability)
 
 # hello_books_API
 Hello_Books API is an application that helps manage a library and its processes like stocking, 
