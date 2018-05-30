@@ -97,7 +97,7 @@ class UserAuthentication(unittest.TestCase):
             "/api/v1/auth/login", data=user)
         self.assertEqual(response.status_code, 400)
 
-    def test_admin_create_book(self):
+    def test_create_book(self):
         book = {"bookid": "007", "book_name": "Introductionto flask",
                 "category": "Engineering"}
         response = self.client.post(
@@ -105,7 +105,7 @@ class UserAuthentication(unittest.TestCase):
         print(response.data)
         self.assertEqual(response.status_code, 201)
 
-    def test_admin_updates_a_book(self):
+    def test_updates_a_book(self):
         book = {"bookid": "004", "book_name": "Introductionto flask",
                 "category": "Engineering"}
         self.client.post(
@@ -117,7 +117,7 @@ class UserAuthentication(unittest.TestCase):
 
         self.assertEqual(response.status_code, 201)
 
-    def test_admin_delete_a_book(self):
+    def test_delete_a_book(self):
         book = {"bookid": "002", "book_name":
                 "Introduction to programming",
                 "category": "Engineering"}
@@ -127,7 +127,7 @@ class UserAuthentication(unittest.TestCase):
         print(response.data)
         self.assertEqual(response.status_code, 204)
 
-    def test_can_get_all_books(self):
+    def test_get_all_books(self):
         books = {"bookid": "001", "bookname": "Introductionto bootstrap",
                  "bookid": "002", "bookname": "Introduction to programming",
                  "bookid": "003", "bookname": "Introduction to javascript",
@@ -137,7 +137,7 @@ class UserAuthentication(unittest.TestCase):
             "/api/v1/books", data=books)
         self.assertEqual(response.status_code, 200)
 
-    def test_user_can_borrow_book(self):
+    def test_borrow_book(self):
         book = {"bookid": "004", "bookname": "Introduction to flask",
                 "category": "software"}
         self.client.post("/api/v1/books", data=book)
@@ -145,7 +145,7 @@ class UserAuthentication(unittest.TestCase):
             "/api/v1/users/books/004", data=book)
         self.assertEqual(response.status_code, 200)
 
-    def test_user_can_get_a_book(self):
+    def test_get_a_book(self):
         book = {"bookid": "002", "bookname": "Introduction to programming"}
         response = self.client.get(
             "/api/v1/books/<bookid>", data=book)
